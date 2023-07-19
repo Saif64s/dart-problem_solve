@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 class Node {
   int row;
@@ -47,9 +48,49 @@ void printMatrix(List<List<String>> matrix) {
     }
     print("");
   }
+  print("\n");
 }
 
-void main() {
+// Helper function to print matrix with a delay and animate the longest path
+Future<void> printMatrixWithDelayAndAnimatePath(
+    List<List<String>> matrix, List<Node> longestPath) async {
+  // Create a copy of the matrix to keep the original state intact
+  List<List<String>> animatedMatrix =
+      matrix.map((row) => List<String>.from(row)).toList();
+
+  for (int i = 1; i < longestPath.length; i++) {
+    // Determine the direction of movement
+    int fromRow = longestPath[i - 1].row;
+    int fromCol = longestPath[i - 1].col;
+    int toRow = longestPath[i].row;
+    int toCol = longestPath[i].col;
+
+    if (fromRow < toRow) {
+      animatedMatrix[fromRow][fromCol] = "↓"; // Down arrow
+    } else if (fromRow > toRow) {
+      animatedMatrix[fromRow][fromCol] = "↑"; // Up arrow
+    } else if (fromCol < toCol) {
+      animatedMatrix[fromRow][fromCol] = "→"; // Right arrow
+    } else if (fromCol > toCol) {
+      animatedMatrix[fromRow][fromCol] = "←"; // Left arrow
+    }
+
+    // Introduce a delay after marking a node with an arrow
+    await Future.delayed(Duration(milliseconds: 200));
+    // Clear the console
+    if (Platform.isWindows) {
+      // For Windows OS
+      await Process.run('cls', []);
+    } else {
+      // For other OS (Linux, macOS)
+      await Process.run('clear', []);
+    }
+    // Print the updated matrix with the animated path
+    printMatrix(animatedMatrix);
+  }
+}
+
+Future<void> main() async {
   stdout.write("Enter the number of rows (m): ");
   int m = int.parse(stdin.readLineSync()!);
 
@@ -91,12 +132,7 @@ void main() {
   matrix[secondPoint[0]][secondPoint[1]] = "X";
 
   print("\nSelected two Nodes:");
-  for (int i = 0; i < m; i++) {
-    for (int j = 0; j < n; j++) {
-      stdout.write(matrix[i][j] + " ");
-    }
-    print("");
-  }
+  printMatrix(matrix);
 
   Node firstNode = graph[firstPoint[0]][firstPoint[1]];
   Node secondNode = graph[secondPoint[0]][secondPoint[1]];
@@ -114,5 +150,13 @@ void main() {
       stdout.write("(${node.row},${node.col}) ");
     }
     print("");
+  }
+  for (int i = 0; i < longestPaths.length; i++) {
+    print("Path ${i + 1}: ");
+
+    // Introduce a delay before printing each path
+    await Future.delayed(Duration(milliseconds: 500));
+    // Print the matrix with the animated path for the current longest path
+    await printMatrixWithDelayAndAnimatePath(matrix, longestPaths[i]);
   }
 }
