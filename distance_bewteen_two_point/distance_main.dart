@@ -22,7 +22,12 @@ void main() {
   Point point1 = Point(latitude1, longitude1);
   Point point2 = Point(latitude2, longitude2);
 
+  final startTime = DateTime.now();
   double distance = Calculations.calculateDistance(point1, point2);
+  final endTime = DateTime.now();
+
   print(
       "The distance between the two points is approximately ${distance.toStringAsFixed(2)} kilometers.");
+  print(
+      "Runtime: ${endTime.difference(startTime).inMicroseconds} microseconds");
 }
