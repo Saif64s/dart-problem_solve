@@ -1,43 +1,62 @@
-abstract class Phone {
-  void makeCall();
+abstract class Dev {
+  void knowsProgramming();
 }
 
-abstract class Email {
-  void sendMail();
+//! Working as Implicit Interface
+abstract class KnowsCSS {
+  void workOnCSS();
 }
 
-abstract class BrowseInternet {
-  void browse();
+//! Working as Implicit Interface
+abstract class KnowsHtml {
+  void workOnHtml();
 }
 
-class SmartWatch implements Phone {
+//! Working as Implicit Interface
+abstract class KnowsExpressJS {
+  void workOnMakingApi();
+}
+
+class FrontEndDev implements Dev, KnowsCSS, KnowsHtml {
   @override
-  void makeCall() {
+  void knowsProgramming() {
     print("Making call from smartwatch");
+  }
+
+  @override
+  void workOnCSS() {
+    print("WOkring on CSS styling");
+  }
+
+  @override
+  void workOnHtml() {
+    print("Working on HTML File for frontend");
   }
 }
 
-class Mobile implements Phone, Email, BrowseInternet {
+class BackEndDev implements Dev, KnowsHtml, KnowsExpressJS {
   @override
-  void browse() {
+  void workOnMakingApi() {
     print("browsing from phone");
   }
 
   @override
-  void makeCall() {
+  void knowsProgramming() {
     print("Making call from Mobile");
   }
 
   @override
-  void sendMail() {
-    print("sending mail from mobile");
+  void workOnHtml() {
+    print("Knows EJS template engine");
   }
 }
 
 void main(List<String> args) {
-  var mobile = Mobile();
-  mobile.makeCall();
+  var saif = BackEndDev();
+  saif.knowsProgramming();
+  saif.workOnMakingApi();
 
-  var watch = SmartWatch();
-  watch.makeCall();
+  var abhijit = FrontEndDev();
+  abhijit.knowsProgramming();
+  abhijit.workOnCSS();
 }

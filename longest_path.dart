@@ -11,14 +11,14 @@ class Node {
 
 List<List<Node>> graph = [];
 
-void findLongestPaths(Node current, Node destination, List<Node> path,
+void _findLongestPaths(Node current, Node destination, List<Node> visited,
     List<List<Node>> longestPaths, int count) {
   if (current == destination) {
-    path.add(current);
+    visited.add(current);
 
     if (longestPaths.length < count ||
-        path.length > longestPaths[longestPaths.length - 1].length) {
-      longestPaths.add(List.from(path));
+        visited.length > longestPaths[longestPaths.length - 1].length) {
+      longestPaths.add(List.from(visited));
 
       if (longestPaths.length > count) {
         longestPaths.sort((a, b) => b.length - a.length);
@@ -26,22 +26,22 @@ void findLongestPaths(Node current, Node destination, List<Node> path,
       }
     }
 
-    path.removeLast();
+    visited.removeLast();
     return;
   }
 
-  path.add(current);
+  visited.add(current);
 
   for (var neighbor in graph[current.row][current.col].neighbors) {
-    if (!path.contains(neighbor)) {
-      findLongestPaths(neighbor, destination, path, longestPaths, count);
+    if (!visited.contains(neighbor)) {
+      _findLongestPaths(neighbor, destination, visited, longestPaths, count);
     }
   }
 
-  path.removeLast();
+  visited.removeLast();
 }
 
-void printMatrix(List<List<String>> matrix) {
+void _printMatrix(List<List<String>> matrix) {
   for (int i = 0; i < matrix.length; i++) {
     for (int j = 0; j < matrix[i].length; j++) {
       stdout.write(matrix[i][j] + " ");
@@ -52,7 +52,7 @@ void printMatrix(List<List<String>> matrix) {
 }
 
 // Helper function to print matrix with a delay and animate the longest path
-Future<void> printMatrixWithDelayAndAnimatePath(
+Future<void> _printMatrixWithDelayAndAnimatePath(
     List<List<String>> matrix, List<Node> longestPath) async {
   // Create a copy of the matrix to keep the original state intact
   List<List<String>> animatedMatrix =
@@ -86,7 +86,7 @@ Future<void> printMatrixWithDelayAndAnimatePath(
       await Process.run('clear', []);
     }
     // Print the updated matrix with the animated path
-    printMatrix(animatedMatrix);
+    _printMatrix(animatedMatrix);
   }
 }
 
@@ -118,7 +118,7 @@ Future<void> main() async {
   }
 
   print("Matrix:");
-  printMatrix(matrix);
+  _printMatrix(matrix);
 
   stdout.write("Enter the coordinates of the first point (row col): ");
   List<int> firstPoint =
@@ -132,7 +132,7 @@ Future<void> main() async {
   matrix[secondPoint[0]][secondPoint[1]] = "X";
 
   print("\nSelected two Nodes:");
-  printMatrix(matrix);
+  _printMatrix(matrix);
 
   Node firstNode = graph[firstPoint[0]][firstPoint[1]];
   Node secondNode = graph[secondPoint[0]][secondPoint[1]];
@@ -141,7 +141,7 @@ Future<void> main() async {
   print("Second Point: (${secondNode.row}, ${secondNode.col})");
 
   List<List<Node>> longestPaths = [];
-  findLongestPaths(firstNode, secondNode, [], longestPaths, 4);
+  _findLongestPaths(firstNode, secondNode, [], longestPaths, 4);
 
   print("\nLongest Paths:");
   for (int i = 0; i < longestPaths.length; i++) {
@@ -157,6 +157,6 @@ Future<void> main() async {
     // Introduce a delay before printing each path
     await Future.delayed(Duration(milliseconds: 500));
     // Print the matrix with the animated path for the current longest path
-    await printMatrixWithDelayAndAnimatePath(matrix, longestPaths[i]);
+    await _printMatrixWithDelayAndAnimatePath(matrix, longestPaths[i]);
   }
 }
