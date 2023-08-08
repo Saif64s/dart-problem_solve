@@ -6,7 +6,7 @@ import 'coordinate.dart';
 import 'file_reader.dart';
 
 void main() async {
-  final jsonFilePath = 'lat_long_in_range/lat_long.json';
+  final jsonFilePath = 'lat_long.json';
   final fileReader = FileReader();
   final coordinateCalculator = CoordinateCalculator();
 
@@ -38,11 +38,16 @@ void main() async {
     }
   }
 
+  final startTime = DateTime.now();
   var coordinatesInRange = coordinateCalculator.filterCoordinatesByRange(
       coordinates, referencePoint, range * 1000); // Convert range to meters
+  final endTime = DateTime.now();
 
   for (var coordinate in coordinatesInRange) {
     print(
         '✅ - Coordinate ${coordinate.latitude}, ${coordinate.longitude} is within the range.');
   }
+
+  print(
+      "\nRuntime: ${endTime.difference(startTime).inMicroseconds} microseconds");
 }
